@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Content Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="brand">📊 <span id="brand">Content Hub</span></div>
+  <div class="who"><span id="whoami"></span><button id="logout">লগআউট</button></div>
+</div>
+<div class="tabs" id="tabs">
+  <button data-tab="dashboard" class="active">ড্যাশবোর্ড</button>
+  <button data-tab="entries">কন্টেন্ট এন্ট্রি</button>
+  <button data-tab="admin" id="adminTab">অ্যাডমিন</button>
+</div>
+<div class="container">
+  <div id="view-dashboard"></div>
+  <div id="view-entries" class="hidden"></div>
+  <div id="view-admin" class="hidden"></div>
+</div>
+<div id="modal-root"></div>
+<script src="/app.js"></script>
+</body>
+</html>

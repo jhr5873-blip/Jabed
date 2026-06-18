@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Content Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1>📊 Content Hub</h1>
+    <p class="sub">আপনি কে?</p>
+    <div class="auth-tabs">
+      <button data-mode="admin" class="active">👑 Admin</button>
+      <button data-mode="emp">✍️ Employee</button>
+    </div>
+
+    <!-- ADMIN / LOGIN -->
+    <div id="pane-admin">
+      <div id="lerr"></div>
+      <label>ইমেইল</label>
+      <input id="u" autocomplete="username" autocapitalize="none" placeholder="admin@example.com">
+      <label>পাসওয়ার্ড</label>
+      <input id="p" type="password" autocomplete="current-password" placeholder="••••••">
+      <div style="height:14px"></div>
+      <button class="btn block" id="go">লগইন</button>
+      <p class="hint" style="margin-top:14px">অনুমোদিত কর্মীরাও তাদের ইমেইল-পাসওয়ার্ড দিয়ে এখানেই লগইন করবে।<br>প্রথমবার: <b>admin@example.com</b> / <b>admin123</b></p>
+    </div>
+
+    <!-- EMPLOYEE / REQUEST ACCESS -->
+    <div id="pane-emp" class="hidden">
+      <div id="rerr"></div><div id="rok"></div>
+      <p class="hint" style="margin:0 0 6px">অ্যাক্সেস নেই? নিচের তথ্য দিয়ে Admin-কে রিকোয়েস্ট পাঠান। Admin অনুমোদন করলে আপনার ইমেইলে লগইন তথ্য যাবে।</p>
+      <label>আপনার নাম</label>
+      <input id="r_name" placeholder="পুরো নাম">
+      <label>ইমেইল</label>
+      <input id="r_email" type="email" autocapitalize="none" placeholder="you@example.com">
+      <label>কোন কাজ করতে চান? <span class="hint">(ঐচ্ছিক)</span></label>
+      <input id="r_note" placeholder="যেমন: কন্টেন্ট বানাতে / পোস্ট করতে চাই">
+      <div style="height:14px"></div>
+      <button class="btn block" id="reqBtn">📩 Admin-কে রিকোয়েস্ট পাঠাও</button>
+    </div>
+  </div>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+document.querySelectorAll('.auth-tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.auth-tabs button').forEach(x=>x.classList.toggle('active',x===b));
+  $('#pane-admin').classList.toggle('hidden',b.dataset.mode!=='admin');
+  $('#pane-emp').classList.toggle('hidden',b.dataset.mode!=='emp');
+});
+async function login(){
+  $('#lerr').innerHTML='';
+  const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:$('#u').value,password:$('#p').value})});
+  const d=await r.json();
+  if(!r.ok){$('#lerr').innerHTML='<div class="err">'+(d.error||'লগইন ব্যর্থ')+'</div>';return;}
+  location.href='/app';
+}
+$('#go').onclick=login;
+$('#p').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+$('#u').addEventListener('keydown',e=>{if(e.key==='Enter')$('#p').focus()});
+async function sendReq(){
+  $('#rerr').innerHTML='';$('#rok').innerHTML='';
+  const r=await fetch('/api/requests',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name:$('#r_name').value,email:$('#r_email').value,note:$('#r_note').value})});
+  const d=await r.json();
+  if(!r.ok){$('#rerr').innerHTML='<div class="err">'+(d.error||'পাঠানো যায়নি')+'</div>';return;}
+  $('#rok').innerHTML='<div class="ok-msg">✅ রিকোয়েস্ট পাঠানো হয়েছে! Admin অনুমোদন করলে আপনার ইমেইলে লগইন তথ্য যাবে।</div>';
+  $('#r_name').value='';$('#r_email').value='';$('#r_note').value='';
+}
+$('#reqBtn').onclick=sendReq;
+</script>
+</body>
+</html>
